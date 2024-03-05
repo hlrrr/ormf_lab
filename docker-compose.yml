@@ -1,0 +1,20 @@
+version: "3"
+services:
+  rmf-simulation:
+    image: ghcr.io/open-rmf/rmf_deployment_template/rmf-simulation:latest
+    network_mode: host
+    command: bash -c "ros2 launch rmf_demos_gz office.launch.xml headless:=1 server_uri:=ws://localhost:8000/_internal"
+
+  rmf-web-rmf-server:
+    image: ghcr.io/open-rmf/rmf_deployment_template/rmf-web-rmf-server:latest
+    network_mode: host
+    depends_on:
+      - rmf-simulation
+
+  rmf-web-dashboard-local:
+    image: ghcr.io/open-rmf/rmf_deployment_template/rmf-web-dashboard-local:latest
+    ports:
+      - "3000:80"
+    depends_on:
+      - rmf-simulation
+      - rmf-web-rmf-server
